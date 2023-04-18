@@ -57,7 +57,8 @@ public class Platformer implements Runnable, KeyListener {
     public int portalWidth;
     public int portalHeight;
     public SoundFile theme;
-
+    public Platform[] platforms5;
+    public Egg[] eggs5;
     public boolean activated = false;
 //methods
 
@@ -92,7 +93,6 @@ public class Platformer implements Runnable, KeyListener {
         platforms1[2]=new Platform(500,250,200,100);
         platforms1[3]=new Platform(800,150,200,100);
         platforms1[4]=new Platform(300,400,200,100);
-
         platforms2 = new Platform[3];
         platforms2[0]=new Platform(0,500,150,100);
         platforms2[1]=new Platform(150,300,150,100);
@@ -118,9 +118,30 @@ public class Platformer implements Runnable, KeyListener {
         platforms3[5]=new Platform(600,200,100,100);
 
         button3 = new Button(60, 150);
+        eggs5 = new Egg[5];
+        eggs5[0]=new Egg(200,250,50,60);
+        eggs5[1]=new Egg(400,0,50,60);
+        eggs5[2]=new Egg(600,-250,50,60);
+        eggs5[3]=new Egg(400, -500, 50, 60);
+        eggs5[4]=new Egg(600, -750, 50, 60);
 
+        platforms5 = new Platform[14];
+        platforms5[0] = new Platform(0,500, 150,100);
+        platforms5[1] = new Platform(150,300, 150,100);
+        platforms5[2] = new Platform(300,400, 150,100);
+        platforms5[3] = new Platform(300,250,150,100);
+        platforms5[4] = new Platform(500, 150,150,100);
+        platforms5[5] = new Platform(350, 50, 150,100);
+        platforms5[6] = new Platform(600, -50, 150, 100);
+        platforms5[7] = new Platform(500, -200, 150, 100);
+        platforms5[8] = new Platform(250, -250, 150,100);
+        platforms5[9] = new Platform(50, -350,150,100);
+        platforms5[10] = new Platform(300, -450, 150,100);
+        platforms5[11] = new Platform(600, -550,150,100);
+        platforms5[12] = new Platform(500, -700, 150,100);
+        platforms5[13] = new Platform(450, -800, 150, 100);
 
-        level=0;
+        level=4;
 
         testURL();
     }
@@ -178,13 +199,26 @@ public class Platformer implements Runnable, KeyListener {
                 g.drawImage(platformPic, platforms3[5].xpos, platforms3[5].ypos, platforms3[5].width, platforms3[5].height, null);
             }
 
-
+        }
+        if(level==4) {
+            for (int x = 0; x < platforms5.length; x++) {
+                g.drawImage(platformPic, platforms5[x].xpos, platforms5[x].ypos - player1.ypos + 500, platforms5[x].width, platforms5[x].height, null);
+            }
+            for (int x = 0; x < eggs5.length; x++) {
+                if (eggs5[x].isAlive) {
+                    g.drawImage(eggPic, eggs5[x].xpos, eggs5[x].ypos - player1.ypos + 500, eggs5[x].width, eggs5[x].height, null);
+                }
+            }
+        }
+        if(!(level == 4)) {
+            g.drawImage(portalPic, portalXpos, portalYpos, portalWidth, portalHeight, null);
+        }
+        else {
+            g.drawImage(portalPic, portalXpos, portalYpos - player1.ypos + 500, portalWidth, portalHeight, null);
         }
 
-        g.drawImage(portalPic,portalXpos,portalYpos,portalWidth,portalHeight,null);
-
-
-        if (level!=0) g.drawImage(playerPic,player1.xpos,player1.ypos,player1.width,player1.height,null);
+        if (level!=0 && level!=4) g.drawImage(playerPic,player1.xpos,player1.ypos,player1.width,player1.height,null);
+        if(level == 4) g.drawImage(playerPic,player1.xpos,500,player1.width,player1.height,null);
         if (level==0) g.drawImage(startScreen,0,0,1000,700,null);
         //last 2 lines
         g.dispose();
@@ -227,8 +261,13 @@ public class Platformer implements Runnable, KeyListener {
                     e.isAlive = true;
                 }
             }
-            else{
+            else if(level==2){
                 for (Egg e : eggs2){
+                    e.isAlive=true;
+                }
+            }
+            else if(level ==4){
+                for (Egg e:eggs5){
                     e.isAlive=true;
                 }
             }
@@ -254,7 +293,12 @@ public class Platformer implements Runnable, KeyListener {
             portalWidth=80;
             portalHeight=80;
         }
-
+        if (level==4){
+            portalXpos= 450;
+            portalYpos= -900;
+            portalWidth=80;
+            portalHeight=80;
+        }
         Rectangle portalrec = new Rectangle(portalXpos,portalYpos,portalWidth,portalHeight);
 
 
@@ -317,6 +361,19 @@ public class Platformer implements Runnable, KeyListener {
                 }
             }
         }
+        if (level==4) {
+            for (int x = 0; x < platforms5.length; x++) {
+                if (platforms5[x].rec.intersects(player1.testrec)) {
+                    player1.isGrounded = true;
+                    player1.isJumping = true;
+                    player1.ddy = 2;
+                    player1.dy = 20;
+
+                } else {
+                    player1.isJumping = true;
+                }
+            }
+        }
         //if (level==3){
         //    for (int x=0; x<platforms3.length; x++) {
         //        if (platforms3[x].rec.intersects(player1.testrec)) {
@@ -353,6 +410,13 @@ public class Platformer implements Runnable, KeyListener {
                 }
             }
         }
+        if (level==4) {
+            for (int x = 0; x < eggs5.length; x++) {
+                if (eggs5[x].rec.intersects(player1.rec)) {
+                    eggs5[x].isAlive = false;
+                }
+            }
+        }
 
         if (level==1){
             if (!eggs1[0].isAlive && !eggs1[1].isAlive && !eggs1[2].isAlive && player1.rec.intersects(portalrec)){
@@ -361,17 +425,26 @@ public class Platformer implements Runnable, KeyListener {
                 player1.ypos=0;
             }
         }
-        if (level==2){
+        else if (level==2){
             if (!eggs2[0].isAlive && !eggs2[1].isAlive && !eggs2[2].isAlive && player1.rec.intersects(portalrec)){
                 level++;
                 player1.xpos=0;
                 player1.ypos=0;
             }
         }
-        if (level==3){
-            if (!eggs2[0].isAlive && !eggs2[1].isAlive && !eggs2[2].isAlive && player1.rec.intersects(portalrec)){
-                player1.xpos=200;
-                player1.ypos=600;
+        else if (level==3){
+            if (player1.rec.intersects(portalrec)){
+                level=4;
+                System.out.println("check Check");
+                player1.xpos=0;
+                player1.ypos=0;
+            }
+        }
+        else if(level==4){
+            if (!eggs5[0].isAlive&&!eggs5[1].isAlive&&!eggs5[2].isAlive&&!eggs5[3].isAlive&&!eggs5[4].isAlive&& player1.rec.intersects(portalrec)){
+                level = 0;
+                player1.xpos=0;
+                player1.ypos=0;
             }
         }
     }
