@@ -106,13 +106,21 @@ public class Platformer implements Runnable, KeyListener {
         eggs5[3]=new Egg(400, -500, 50, 60);
         eggs5[4]=new Egg(600, -750, 50, 60);
 
-       platforms5 = new Platform[6];
+       platforms5 = new Platform[14];
        platforms5[0] = new Platform(0,500, 150,100);
        platforms5[1] = new Platform(150,300, 150,100);
        platforms5[2] = new Platform(300,400, 150,100);
-       platforms5[3] = new Platform(300,500,150,100);
-       platforms5[4] = new Platform(500,450,150,100);
-       platforms5[5] = new Platform(600, 0, 150,100);
+       platforms5[3] = new Platform(300,250,150,100);
+       platforms5[4] = new Platform(500, 150,150,100);
+       platforms5[5] = new Platform(350, 50, 150,100);
+       platforms5[6] = new Platform(600, -50, 150, 100);
+       platforms5[7] = new Platform(500, -200, 150, 100);
+       platforms5[8] = new Platform(250, -250, 150,100);
+       platforms5[9] = new Platform(50, -350,150,100);
+       platforms5[10] = new Platform(300, -450, 150,100);
+       platforms5[11] = new Platform(600, -550,150,100);
+       platforms5[12] = new Platform(500, -700, 150,100);
+       platforms5[13] = new Platform(450, -800, 150, 100);
        level=0;
        testURL();
     }
@@ -170,8 +178,12 @@ public class Platformer implements Runnable, KeyListener {
                 }
             }
         }
-
-        g.drawImage(portalPic,portalXpos,portalYpos,portalWidth,portalHeight,null);
+        if(!(level == 5)) {
+            g.drawImage(portalPic, portalXpos, portalYpos, portalWidth, portalHeight, null);
+        }
+        else{
+            g.drawImage(portalPic, portalXpos, portalYpos-player1.ypos+500, portalWidth, portalHeight, null);
+        }
 
 
         if (level!=0 && level!=5) g.drawImage(playerPic,player1.xpos,player1.ypos,player1.width,player1.height,null);
@@ -244,7 +256,12 @@ public class Platformer implements Runnable, KeyListener {
             portalWidth=80;
             portalHeight=80;
         }
-
+        if (level==5){
+            portalXpos= 450;
+            portalYpos= -900;
+            portalWidth=80;
+            portalHeight=80;
+        }
         Rectangle portalrec = new Rectangle(portalXpos,portalYpos,portalWidth,portalHeight);
 
 
@@ -335,7 +352,14 @@ public class Platformer implements Runnable, KeyListener {
         }
         if (level==2){
             if (!eggs2[0].isAlive && !eggs2[1].isAlive && !eggs2[2].isAlive && player1.rec.intersects(portalrec)){
-                level=0;
+                level=5;
+                player1.xpos=0;
+                player1.ypos=0;
+            }
+        }
+        if(level==5){
+            if (!eggs5[0].isAlive&&!eggs5[1].isAlive&&!eggs5[2].isAlive&&!eggs5[3].isAlive&&!eggs5[4].isAlive&& player1.rec.intersects(portalrec)){
+                level = 0;
                 player1.xpos=0;
                 player1.ypos=0;
             }
@@ -363,7 +387,7 @@ public class Platformer implements Runnable, KeyListener {
             player1.down=true;
         }
         if(keyCode==32){
-            if (level==0)level=5;
+            if (level==0)level=1;
         }
 
     }//keyPressed()
