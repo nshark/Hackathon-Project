@@ -141,7 +141,7 @@ public class Platformer implements Runnable, KeyListener {
         platforms5[12] = new Platform(500, -700, 150,100);
         platforms5[13] = new Platform(450, -800, 150, 100);
 
-        level=4;
+        level=0;
 
         testURL();
     }
